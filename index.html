@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Recién Agregado - Llutid+</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1a1a1a; /* Fondo oscuro */
+            font-family: 'Roboto', sans-serif;
+            color: #e0e0e0; /* Texto gris claro */
+            overflow-x: hidden;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Pantalla de inicio */
+        .intro-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #00bfff;
+            opacity: 0;
+            animation: aparecer 2s ease forwards, desaparecer 1s ease forwards 4s;
+            text-shadow: 0 0 10px #00bfff88, 0 0 20px #00bfff44;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 4px;
+        }
+
+        .logo-container span {
+            color: white;
+        }
+
+        @keyframes aparecer {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes desaparecer {
+            to {
+                opacity: 0;
+                transform: scale(1.05);
+            }
+        }
+
+        /* Main content */
+        .main-content {
+            display: block; /* Cambiado a block inicialmente */
+            opacity: 0; /* Inicialmente invisible */
+            transition: opacity 1s ease-in-out; /* Transición suave */
+            padding-top: 20px;
+        }
+
+        .main-content.visible {
+            opacity: 1; /* Visible después de la animación */
+        }
+
+        /* Barra fija */
+        .sticky-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(26, 26, 26, 0.9); /* Fondo oscuro con transparencia */
+            padding: 15px 20px;
+            z-index: 100;
+            backdrop-filter: blur(10px); /* Efecto de desenfoque */
+            box-shadow: 0 4px 10px rgba(0, 191, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-bar {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-bar h1 {
+            font-size: 2.5rem;
+            color: #00bfff;
+            text-transform: uppercase;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 5px;
+            margin-bottom: 0;
+            margin-right: 20px;
+        }
+
+        .logo-bar h1 span {
+            color: white;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .sticky-bar input {
+            padding: 12px 20px;
+            width: 200px;
+            font-size: 16px;
+            border-radius: 25px;
+            border: 1px solid #666; /* Borde más sutil */
+            outline: none;
+            background-color: #333; /* Fondo más oscuro */
+            color: #fff;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .sticky-bar input:focus {
+            border-color: #00bfff;
+            box-shadow: 0 0 8px rgba(0, 191, 255, 0.5);
+        }
+
+        .sticky-bar input::placeholder {
+            color: #999;
+        }
+
+        /* Icono del menú */
+        .menu-icon {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 22px;
+            cursor: pointer;
+        }
+
+        .menu-icon div {
+            width: 100%;
+            height: 3px;
+            background-color: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Menú desplegable */
+        .menu-dropdown {
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            background-color: rgba(26, 26, 26, 0.95); /* Fondo oscuro con más transparencia */
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: -8px 8px 10px rgba(0, 191, 255, 0.1); /* Sombra más sutil */
+            z-index: 101;
+            border-radius: 5px;
+        }
+
+        .menu-dropdown a {
+            color: #ddd; /* Color de enlace más claro */
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+            text-align: center;
+            display: block;
+        }
+
+        .menu-dropdown a:hover {
+            color: #00bfff;
+        }
+
+        /* Video Header */
+        .video-header {
+            width: 100%;
+            max-height: 500px; /* Ajusta la altura si es necesario */
+            overflow: hidden;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #444;
+            position: relative; /* Para posicionar los controles absolute */
+        }
+
+        .video-header iframe {
+            display: block;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .video-controls button {
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-controls button:hover {
+            opacity: 1;
+        }
+
+        /* Catálogo de Recién Agregado */
+        .catalogo-recien-agregado-container {
+            padding: 30px; /* Más espacio */
+            margin-bottom: 40px;
+            border-bottom: 1px solid #444; /* Línea más fina */
+        }
+
+        .catalogo-recien-agregado-container h2 {
+            color: #00bfff;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 20px; /* Más espacio */
+            font-size: 2.2rem;
+            text-align: center;
+        }
+
+        .catalogo-recien-agregado-container h2 span {
+            color: white;
+        }
+
+        .peliculas-recien-agregadas-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Aumenta el ancho mínimo */
+            gap: 25px; /* Más espacio */
+            padding-bottom: 25px;
+        }
+
+        .pelicula-recien-agregada {
+            background-color: #333; /* Fondo más oscuro */
+            border-radius: 12px; /* Bordes más redondeados */
+            text-align: center;
+            box-shadow: 0 6px 15px rgba(255, 255, 255, 0.1); /* Sombra más sutil */
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pelicula-recien-agregada:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 191, 255, 0.2); /* Sombra más pronunciada al pasar el ratón */
+        }
+
+        .pelicula-recien-agregada a {
+            text-decoration: none;
+            display: block;
+            height: 100%; /* Para que el enlace cubra todo el contenedor */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Espaciar la imagen y la info */
+        }
+
+        .pelicula-recien-agregada img {
+            width: 100%;
+            height: 280px; /* Aumenta la altura */
+            object-fit: cover;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            margin-bottom: 10px; /* Espacio para la info */
+        }
+
+        .pelicula-info {
+            padding: 10px 15px 15px 15px;
+            text-align: left;
+        }
+
+        .pelicula-info p {
+            font-size: 0.9rem;
+            color: #bbb;
+            margin-bottom: 5px;
+        }
+
+        .pelicula-info p strong {
+            color: #eee;
+        }
+
+        .pelicula-info .titulo {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #f0f0f0;
+            margin-bottom: 8px;
+        }
+
+        /* Enlace de Administrador */
+        .admin-link {
+            text-align: center;
+            margin-top: 30px; /* Más espacio */
+            opacity: 0.8; /* Más visible */
+            font-size: 1rem;
+        }
+
+        .admin-link a {
+            color: #bbb;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .admin-link a:hover {
+            color: #00bfff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sticky-bar {
+                padding: 10px;
+            }
+
+            .logo-bar h1 {
+                font-size: 2rem;
+                margin-right: 10px;
+            }
+
+            .sticky-bar input {
+                width: 150px;
+                font-size: 14px;
+            }
+
+            .menu-dropdown {
+                top: 50px;
+                right: 10px;
+                padding: 15px;
+            }
+
+            .menu-dropdown a {
+                font-size: 1rem;
+            }
+
+            .video-header {
+                max-height: 350px;
+                margin-bottom: 20px;
+            }
+
+            .catalogo-recien-agregado-container {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .catalogo-recien-agregado-container h2 {
+                font-size: 1.8rem;
+                margin-bottom: 10px;
+            }
+
+            .peliculas-recien-agregadas-list {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+                padding-bottom: 15px;
+            }
+
+            .pelicula-recien-agregada img {
+                height: 200px;
+                margin-bottom: 10px;
+            }
+
+            .pelicula-info .titulo {
+                font-size: 1rem;
+                margin-bottom: 5px;
+            }
+
+            .pelicula-info p {
+                font-size: 0.8rem;
+                margin-bottom: 3px;
+            }
+
+            .admin-link {
+                margin-top: 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .logo-bar h1 {
+                font-size: 1.7rem;
+            }
+
+            .sticky-bar input {
+                display: none; /* Ocultar el buscador en pantallas pequeñas */
+            }
+
+            .menu-dropdown {
+                right: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="intro-screen">
+        <div class="logo-container">Llutid<span>+</span></div>
+    </div>
+
+    <div class="main-content">
+
+        <div class="sticky-bar">
+            <div class="logo-bar">
+                <h1>Llutid<span>+</span></h1>
+            </div>
+            <div class="search-container">
+                <input type="text" id="search" placeholder="Buscar película..." onkeyup="buscarPelicula()">
+                <div class="menu-icon" onclick="toggleMenu()">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-dropdown" id="menuDropdown">
+            <a href="index.html">HOME</a>
+            <a href="recientemente_agregado.html">RECIEN AGREGADO</a>
+            <a href="proximos_lanzamientos.html">PROXIMAS EN LANZAMIENTO</a>
+            <a href="streaming_nuevos.html">EN VIVO STREAMING DE NUEVAS LANZAMIENTOS</a>
+        </div>
+
+        <div class="video-header">
+            <div style="padding:54.06% 0 0 0;position:relative;">
+                <iframe id="vimeo-player" src="https://player.vimeo.com/video/1083927478?h=f38f2dab47&badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&muted=0" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="tu_video.mp4"></iframe>
+            </div>
+            <div class="video-controls">
+                <button id="mute-button">
+                    <svg viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px;">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85 5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path>
+                    </svg>
+                </button>
+            </div><script src="https://player.vimeo.com/api/player.js"></script>
+        </div>
+
+        <div class="catalogo-recien-agregado-container">
+            <h2>Recién Agregado en <span>Llutid+</span></h2>
+            <div class="peliculas-recien-agregadas-list" id="peliculas-list">
+            </div>
+        </div>
+
+        <div class="admin-link">
+            <p><a href="#">Panel de Administrador</a></p>
+        </div>
+
+    </div>
+
+    <script>
+        // JavaScript para la pantalla de inicio
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                document.querySelector('.intro-screen').style.display = 'none';
+                document.querySelector('.main-content').classList.add('visible'); // Agrega la clase 'visible'
+            }, 5000); // Simula 5 segundos de carga
+        });
+
+        // JavaScript para el menú desplegable
+        function toggleMenu() {
+            var menu = document.getElementById('menuDropdown');
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        // Array de películas recién agregadas (ejemplo)
+        const peliculasRecienAgregadas = [
+            {
+                titulo: "LOST Y FOUD",
+                lanzamiento: "2025",
+                hora: "21:00",
+                duracion: "2h 15m",
+                imagen: "https://i.postimg.cc/1zQcLFyC/result-lost-and-found.jpg",
+                link: "https://www.youtube.com/watch?v=Houf6FZ1lOY"
+            },
+            {
+                titulo: "TED",
+                lanzamiento: "2025",
+                hora: "19:30",
+                duracion: "1h 48m",
+                imagen: "https://i.postimg.cc/rpMxhL97/result-ted.jpg",
+                link: "https://www.youtube.com/watch?v=tvaTGUOVtsE"
+            },
+            {
+                titulo: "MOANA 2",
+                lanzamiento: "2024",
+                hora: "22:15",
+                duracion: "2h 05m",
+                imagen: "https://i.postimg.cc/44SvXqJh/result-moana-2-1.jpg",
+                link: "https://www.youtube.com/watch?v=t3C8TrVo0zo"
+            },
+            {
+                titulo: "LOS SIMPSON",
+                lanzamiento: "2025",
+                hora: "18:00",
+                duracion: "1h 30m",
+                imagen: "https://i.postimg.cc/Y2ZF5F36/result-212221.jpg",
+                link: "https://www.youtube.com/watch?v=hiRST4Jvo0s"
+            },
+            {
+                titulo: "Rick y Morty",
+                lanzamiento: "2024",
+                hora: "20:45",
+                duracion: "2h 30m",
+                imagen: "https://i.postimg.cc/JhrHN5rL/result-riki-and-morty.jpg",
+                link: "https://www.youtube.com/watch?v=E8cXKMR9a1Q"
+            },
+            {
+                titulo: "CAPITAN AMERICA",
+                lanzamiento: "2025",
+                hora: "17:00",
+                duracion: "1h 55m",
+                imagen: "https://i.postimg.cc/J4X6yZ4x/result-Capitan-America-Un-nuevo-mundo-01.jpg",
+                link: "https://www.youtube.com/watch?v=RXoqRPP-y5c"
+            },
+            // Puedes agregar más películas aquí
+        ];
+
+        // Función para mostrar las películas en el catálogo
+        function mostrarPeliculas(peliculas) {
+            const listaPeliculas = document.getElementById('peliculas-list');
+            listaPeliculas.innerHTML = ''; // Limpiar la lista anterior
+
+            peliculas.forEach(pelicula => {
+                const peliculaDiv = document.createElement('div');
+                peliculaDiv.classList.add('pelicula-recien-agregada');
+
+                const linkPelicula = document.createElement('a');
+                linkPelicula.href = pelicula.link;
+
+                const imagenPelicula = document.createElement('img');
+                imagenPelicula.src = pelicula.imagen;
+                imagenPelicula.alt = pelicula.titulo;
+
+                const infoPelicula = document.createElement('div');
+                infoPelicula.classList.add('pelicula-info');
+
+                const tituloPelicula = document.createElement('p');
+                tituloPelicula.classList.add('titulo');
+                tituloPelicula.textContent = pelicula.titulo;
+
+                const lanzamientoPelicula = document.createElement('p');
+                lanzamientoPelicula.innerHTML = `<strong>Lanzamiento:</strong> ${pelicula.lanzamiento}`;
+
+                const horaPelicula = document.createElement('p');
+                horaPelicula.innerHTML = `<strong>Hora:</strong> ${pelicula.hora}`;
+
+                const duracionPelicula = document.createElement('p');
+                duracionPelicula.innerHTML = `<strong>Duración:</strong> ${pelicula.duracion}`;
+
+                infoPelicula.appendChild(tituloPelicula);
+                infoPelicula.appendChild(lanzamientoPelicula);
+                infoPelicula.appendChild(horaPelicula);
+                infoPelicula.appendChild(duracionPelicula);
+
+                linkPelicula.appendChild(imagenPelicula);
+                linkPelicula.appendChild(infoPelicula);
+
+                peliculaDiv.appendChild(linkPelicula);
+                listaPeliculas.appendChild(peliculaDiv);
+            });
+        }
+
+        // Función para buscar películas
+        function buscarPelicula() {
+            const inputBusqueda = document.getElementById('search');
+            const textoBusqueda = inputBusqueda.value.toLowerCase();
+            const peliculasFiltradas = peliculasRecienAgregadas.filter(pelicula =>
+                pelicula.titulo.toLowerCase().includes(textoBusqueda)
+            );
+            mostrarPeliculas(peliculasFiltradas);
+        }
+
+        // Mostrar las películas al cargar la página
+        mostrarPeliculas(peliculasRecienAgregadas);
+
+        // JavaScript para el control de sonido del video de Vimeo
+        document.addEventListener('DOMContentLoaded', function() {
+            const player = new Vimeo.Player(document.getElementById('vimeo-player'));
+            const muteButton = document.getElementById('mute-button');
+            let isMuted = false;
+
+            player.setAutoplay(true);
+            player.setMuted(false); // Inicialmente con sonido
+
+            muteButton.addEventListener('click', function() {
+                player.setMuted(!isMuted).then(function(muted) {
+                    isMuted = muted;
+                    muteButton.innerHTML = isMuted ? `
+                        <svg viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px;">
+                            <path d="M16.5 12c0 1.77-1.02 3.29-2.5 4.03v-8.05c1.48-.73 2.5-2.25 2.5-4.02 0 .8 0.34 1.55 0.9 2.1l1.94-1.87c-1.5-1.29-3.54-2.03-5.4-2.03v2.06c2.89.86 5 3.54 5 6.71zm-13.5-3l-3-3v12l3-3h8v-6H3zm9 8c-.67 0-1.33-.32-1.66-.83l-1.79 1.72c1.22 1.22 2.83 1.91 4.5 1.91v-2.06c-.67.15-1.3.22-1.95.22zm3-8v-2.06c-2.89.86-5 3.54-5 6.71s2.11 5.85 5 6.71v-2.06c-.9-.23-1.73-.64-2.5-.77v-2.06c.8-.13 1.63-.2 2.5-.2v-2.06c-.87-.07-1.7-.14-2.5-.21v-2.06c.67-.15 1.3-.22 1.95-.22 1.67 0 3.28.69 4.5 1.91l-1.79 1.72c-.33-.51-.99-.83-1.66-.83z"></path>
+                        </svg>
+                    ` : `
+                        <svg viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px;">
+                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path>
+                        </svg>
+                    `;
+                }).catch(function(error) {
+                    console.error('Error setting mute:', error);
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
